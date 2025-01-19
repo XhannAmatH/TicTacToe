@@ -1,11 +1,38 @@
 #   Author  :   XhannAmatH
 
 import random, time
+import languages_dicts
+
+lang = {}
+board = {1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9}
+
+def select_language():
+    while(True):
+        try:
+            option = int(input("Language Selection \n1) English\n2)Spanish\nYour option [1-2] : "))
+            if(option == 1):
+                print("English language selected!")
+                lang.update(languages_dicts.english)
+                time.sleep(2)
+                draw_move(board)
+            elif(option == 2):
+                print("Spanish language selected!")
+                lang.update(languages_dicts.spanish)
+                time.sleep(2)
+                draw_move(board)
+            else:
+                print("Strange option... English selected as default")
+                lang.update(languages_dicts.english)
+                time.sleep(2)
+                draw_move(board)
+        except ValueError:
+            print("Only numbers from are allowed!!!")
+        except Exception as e:
+            print(e)
+            break
 
 
 def display_board(board):
-    # The function accepts one parameter containing the board's current status
-    # and prints it out to the console.
     print(  " +-------+-------+-------+\n",
             "|       |       |       |\n",
             "|  ",board.get(1),"  |  ",board.get(2),"  |  ",board.get(3),"  |\n",
@@ -21,21 +48,20 @@ def display_board(board):
             "+-------+-------+-------+\n")
 
 def enter_move(board):
-    # The function accepts the board's current status, asks the user about their move, 
-    # checks the input, and updates the board according to the user's decision.
     while(True):
         try:
-            move = int(input("Enter your move : "))
+            move = int(input(lang["user_turn"]))
         except ValueError:
-            print("You must enter only numbers between 1 and 9!!")
+            print(lang["user_input_error"])
         if((move > 0 and move < 10) and move in make_list_of_free_fields(board)):
             if(board[move]== "O" or board[move]== "X"):
-                print("That space is already taken, choose another")
+                print(lang["full_field"])
             else:
                 board[move] = "O"
                 display_board(board)
                 victory_for(board, "O")
-        
+        else:
+            print(lang["user_input_error"])
 
 def make_list_of_free_fields(board):
     # The function browses the board and builds a list of all the free squares; 
@@ -60,14 +86,14 @@ def victory_for(board, sign):
     or board[1] == sign and board[5] == sign and board[9] == sign
     or board[7] == sign and board[5] == sign and board[3] == sign):
         if(sign == "X"):
-            print("The Enemy Wins!!... you SUCK!!")
+            print(lang["user_lost"])
             exit()
         elif(sign == "O"):
-            print("You Win!! Well Done")
+            print(lang["user_win"])
             exit()
     elif(not make_list_of_free_fields(board)):
         #empty free spaces
-        print("Draw!! you both suck!!")
+        print(lang["draw"])
     else:
         if(sign == "X"):
             enter_move(board)
@@ -75,8 +101,7 @@ def victory_for(board, sign):
             draw_move(board)
 
 def draw_move(board):
-    # The function draws the computer's move and updates the board.
-    print("The enemy will make a move!!")
+    print(lang.get('enemy_turn'))
     time.sleep(2)
     while(True):
         position = random.randint(1,9)
@@ -84,10 +109,6 @@ def draw_move(board):
             board[position]="X"
             display_board(board)
             victory_for(board, "X")
-    
 
 
-
-
-board = {1:1,2:2,3:3,4:4,5:5,6:6,7:7,8:8,9:9}
-draw_move(board)
+select_language()
